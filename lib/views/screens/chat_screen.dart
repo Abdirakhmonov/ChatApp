@@ -6,6 +6,7 @@ import 'dart:io';
 import '../../controllers/chat_controller.dart';
 import '../../models/message.dart';
 import '../../models/user.dart';
+import '../../services/push_notification.dart';
 
 class ChatScreen extends StatefulWidget {
   User1 user;
@@ -28,6 +29,8 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_messageController.text.isNotEmpty) {
       chatcontroller.sendMessage(
           widget.user.id, _messageController.text, widget.user.userName);
+      FirebasePushNotificationService.sendNotificationMessage(
+          widget.user.token, widget.user.userName, _messageController.text);
       _messageController.clear();
     }
   }
@@ -38,10 +41,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
-      chatcontroller.sendImageMessage(
+      final image =  chatcontroller.sendImageMessage(
           widget.user.id, imageFile, widget.user.userName);
+      FirebasePushNotificationService.sendNotificationImage(
+          widget.user.token, widget.user.userName, image);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
